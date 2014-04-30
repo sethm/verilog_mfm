@@ -1,39 +1,68 @@
 module MFM_Shift_Test;
 
-   reg clk, load, si;
-   reg [5:0] d;
+   reg clk;
+   reg load;
+   reg [2:0] pulses;
    wire so;
+   wire done;
 
    MFM_Shift s1 (.clk (clk),
                  .load (load),
-                 .si (si),
-                 .d (d),
-                 .so (so));
+                 .pulses (pulses),
+                 .so (so),
+                 .done (done));
 
    // Simulate a clock
    initial
      begin
-        clk = 1;
-        load = 0;
-        si = 0;
-        d = 5'b01101;
+        pulses = 2;
+        clk = 0;
      end
 
    always
-     #5 clk = !clk;
-
-   initial
      begin
-        #0 load = 1;
-        #10 load = 0;
-        #200 $finish;
+        clk = !clk;
+        #5;
      end
 
    initial
      begin
-        // $display("tick\tload\tsi\tclk\tso");
-        // $monitor("%0t\t%0d\t%0d\t%0d\t%0d", $time, load, si, clk, so);
-        $monitor("%0t %0d %0d", $time, clk, so);
+        load = 1;
+        #10;
+        load = 0;
+
+        #140;
+
+        pulses = 3;
+
+        load = 1;
+        #10;
+        load = 0;
+
+        #180;
+
+        pulses = 5;
+
+        load = 1;
+        #10;
+        load = 0;
+
+        #180;
+
+        pulses = 3;
+
+        load = 1;
+        #10;
+        load = 0;
+
+        #180;
+
+        $finish;
+     end
+
+   initial
+     begin
+        $monitor("%0t %0d %0d %0d %0d", $time, clk, so, done, load);
      end
 
 
