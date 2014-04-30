@@ -5,52 +5,47 @@ module MFM_Shift (clk, load, pulses, so, done);
 
    output so;           // Serial output
    output done;
-   output shift_done;   // Shift done (one clock)
 
    // Internal state
-   reg so_reg;
-   reg done_reg;
-   reg load_requested;
+   reg so;
+   reg done;
    reg [2:0] pulses_reg;
-   reg [2:0] counter = 0;
+   reg [2:0] counter_reg = 0;
 
    initial
      begin
-        so_reg <= 0;
-        done_reg <= 0;
+        so <= 0;
+        done <= 0;
      end
 
    always @(posedge clk)
      begin
-        if (counter != pulses_reg)
+        if (counter_reg != pulses_reg)
           begin
-             so_reg = 0;
+             so = 0;
 
-             if (counter == 0)
-               done_reg = 1;
+             if (counter_reg == 0)
+               done = 1;
              else
-               done_reg = 0;
+               done = 0;
           end
         else
           begin
-             done_reg = 0;
-             so_reg = 1;
+             done = 0;
+             so = 1;
           end
 
-        if (counter == 0)
-          counter = pulses_reg;
+        if (counter_reg == 0)
+          counter_reg = pulses_reg;
         else
-          counter = counter - 1;
+          counter_reg = counter_reg - 1;
      end
 
    always @(negedge load)
      begin
         pulses_reg = pulses;
-        counter = pulses;
+        counter_reg = pulses;
      end
-
-   assign so = so_reg;
-   assign done = done_reg;
 endmodule
 
 //
