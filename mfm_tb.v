@@ -1,69 +1,68 @@
 module MFM_Shift_Test;
 
-   reg clk;
-   reg load;
-   reg [2:0] pulses;
-   wire so;
-   wire done;
+   reg clk_50;
+   reg raw_mfm;
 
-   MFM_Shift s1 (.clk (clk),
-                 .load (load),
-                 .pulses (pulses),
-                 .so (so),
-                 .done (done));
+   wire clk_5;
+
+   MFM_DPLL pll (.clk_50 (clk_50),
+                 .raw_mfm (raw_mfm),
+                 .clk_5 (clk_5));
 
    // Simulate a clock
    initial
      begin
-        pulses = 2;
-        clk = 0;
+        clk_50 = 0;
+        raw_mfm = 0;
      end
 
    always
      begin
-        clk = !clk;
-        #5;
+        #1;
+        clk_50 = !clk_50;
      end
 
    initial
      begin
-        load = 1;
-        #10;
-        load = 0;
 
-        #140;
+        #71; raw_mfm = 1;
+        #20; raw_mfm = 0;
 
-        pulses = 3;
+        #40; raw_mfm = 1;
+        #20; raw_mfm = 0;
 
-        load = 1;
-        #10;
-        load = 0;
+        #40; raw_mfm = 1;
+        #20; raw_mfm = 0;
 
-        #180;
+        #40; raw_mfm = 1;
+        #20; raw_mfm = 0;
 
-        pulses = 5;
+        #40; raw_mfm = 1;
+        #20; raw_mfm = 0;
 
-        load = 1;
-        #10;
-        load = 0;
+        #43; raw_mfm = 1;
+        #20; raw_mfm = 0;
 
-        #180;
+        #38; raw_mfm = 1;
+        #20; raw_mfm = 0;
 
-        pulses = 3;
+        #60; raw_mfm = 1;
+        #20; raw_mfm = 0;
 
-        load = 1;
-        #10;
-        load = 0;
+        #40; raw_mfm = 1;
+        #20; raw_mfm = 0;
 
-        #180;
+        #80; raw_mfm = 1;
+        #20; raw_mfm = 0;
+
+        #100;
 
         $finish;
      end
 
    initial
      begin
-        $monitor("%0t %0d %0d %0d %0d", $time, clk, so, done, load);
+        $monitor("%0t %0d %0d %0d", $time, clk_50, raw_mfm, clk_5);
      end
-
 
 endmodule // test

@@ -1,5 +1,5 @@
-set terminal png size 1800,400
-set size ratio 0.05
+set terminal png size 4000,400
+set size ratio 0.02
 set key left
 unset border
 unset title
@@ -10,13 +10,13 @@ unset tics
 #set xtics 0,10
 set style data steps
 set multiplot
-set origin 0,0.28
 
-set key at 0,-0.06
-plot "graph.txt" using 1:2 notitle with steps linecolor 2
-plot "graph.txt" using 1:3 title "Output" with steps linecolor 1 linewidth 2
-set origin 0,0
-plot "graph.txt" using 1:5 title "Load" with steps linecolor 3 linewidth 2
-set origin 0,-0.28
-plot "graph.txt" using 1:4 title "Done" with steps linecolor 4 linewidth 2
+set origin 0,0.20
+set key at 0,-0.05
+plot "graph.txt" using 1:2 title "50 MHz Clock" with steps linecolor 2
+set key at 8,-0.30
+plot "graph.txt" using 1:3 title "Raw MFM" with steps linecolor 1 linewidth 2
+set origin 0,-0.20
+set key at 0,-0.05
+plot "graph.txt" using 1:4 title "5 MHz Clock" with steps linecolor 3 linewidth 2
 unset multiplot
