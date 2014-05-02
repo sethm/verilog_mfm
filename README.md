@@ -1,10 +1,18 @@
 Verilog MFM Decoder
 ===================
 
-This project contains an extermely sketchy and very experimental MFM decoder
-module written in Verilog.
+This project contains an extermely sketchy and very experimental MFM
+decoder module written in Verilog.
 
-It's not ready yet. Don't even try to use it.
+It's really not ready yet.
+
+Building
+========
+
+This should build reasonably well on any UNIX-like system. Possibly
+even Windows, if you're brave. I haven't tried. You'll need Icarus
+Verilog (http://iverilog.icarus.com/) to compile it. The default
+Makefile also wants to build a graph using gnuplot, so grab that too.
 
 License
 =======
