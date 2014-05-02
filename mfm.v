@@ -136,9 +136,9 @@ endmodule
 
 //
 // Watch the MFM buffer for the "4E" gap pattern, and when found,
-// assert "sync"
+// assert "sync" (active low)
 //
-module ST412_Gap_Scanner (clk_50, byte_buffer, sync);
+module WD_Gap_Scanner (clk_50, byte_buffer, sync);
    parameter GAP_VAL = 8'h4e; // The gap value 4E4E
 
    input clk_50;
@@ -148,13 +148,76 @@ module ST412_Gap_Scanner (clk_50, byte_buffer, sync);
    reg sync;
 
    initial
-     sync = 0;
+     sync = 1;
 
    always @(negedge clk_50)
      begin
         if (byte_buffer == GAP_VAL)
-          sync = 1;
-        else
           sync = 0;
+        else
+          sync = 1;
      end
+endmodule
+
+//
+// When "sync" is asserted, start consuming bytes from the byte
+// buffer, one at a time, and put them in data_buffer.
+//
+// When data is ready to be read, "data_valid" (active low) is asserted.
+//
+module WD_Decoder (clk_50, sync, byte_buffer, data_buffer, data_valid);
+
+   parameter ID_VAL = 8'h1a;
+
+   input clk_50;
+   // 'ready' is active low
+   input sync;
+
+   input [7:0] byte_buffer;
+   output [7:0] data_buffer;
+   output       data_valid;
+
+   reg          data_valid;
+   reg [7:0]    data_buffer;
+   reg [7:0]    counter;
+
+   // 'ready' is active low
+   reg          ready;
+
+   initial
+     begin
+        counter = 0;
+        ready = 1;
+        data_buffer = 0;
+        data_valid = 1;
+     end
+
+   always @(posedge clk_50)
+     begin
+        if (ready == 0)
+          begin
+             if (counter == 0)
+               begin
+                  data_buffer = byte_buffer;
+                  counter = 7'h4F;
+               end
+             else
+               begin
+                  counter = counter - 1;
+                  // Data Ready should go high again 15 clocks before
+                  // the next read.
+                  if (counter < 7'h40 && counter > 7'h0f)
+                    data_valid = 0;
+                  else
+                    // De-assert
+                    data_valid = 1;
+               end
+          end
+        else
+          begin
+             if (sync == 0)
+               ready = 0;
+          end
+     end
+
 endmodule

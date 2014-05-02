@@ -7,7 +7,7 @@ from decimal import *
 
 deltas = []
 
-max_lines = 500
+max_lines = 2500
 
 def gen_tb_header():
     print """module mfm_test();
@@ -22,6 +22,9 @@ def gen_tb_header():
    wire [15:0] word_buffer;
    wire [7:0]  byte_buffer;
 
+   wire [7:0] data_buffer;
+   wire data_valid;
+
    MFM_DPLL pll (.clk_50 (clk_50),
                  .raw_mfm (raw_mfm),
                  .clk_5 (clk_5));
@@ -32,9 +35,15 @@ def gen_tb_header():
                         .word_buffer (word_buffer),
                         .byte_buffer (byte_buffer));
 
-   ST412_Gap_Scanner scanner (.clk_50 (clk_50),
-                              .byte_buffer (byte_buffer),
-                              .sync (sync));
+   WD_Gap_Scanner scanner (.clk_50 (clk_50),
+                           .byte_buffer (byte_buffer),
+                           .sync (sync));
+
+   WD_Decoder wdd (.clk_50 (clk_50),
+                   .sync (sync),
+                   .byte_buffer (byte_buffer),
+                   .data_buffer (data_buffer),
+                   .data_valid (data_valid));
 
 
    // Simulate a clock
@@ -62,9 +71,11 @@ def gen_tb_footer():
 
    initial
      begin
-        $monitor("%0t %0d %0d %032b 0x%08x %08b 0x%02x %d",
+        $monitor("%0t %0d %0d %032b 0x%08x %08b 0x%02x %d %08b 0x%02x %d",
                  $time, clk_5, raw_mfm, mfm_buffer, mfm_buffer,
-                 byte_buffer, byte_buffer, sync);
+                 byte_buffer, byte_buffer, sync,
+                 data_buffer, data_buffer,
+                 data_valid);
      end
 
 endmodule"""
