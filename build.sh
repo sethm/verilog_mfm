@@ -15,5 +15,4 @@ fi
 
 iverilog -o mfm mfm_decoder_tb.v mfm.v &&
     vvp mfm | tee graph.txt &&
-    gnuplot graph.gnuplot > graph.png &&
-    open graph.png
+    gnuplot graph.gnuplot > graph.png

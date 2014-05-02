@@ -40,9 +40,7 @@ module MFM_DPLL (clk_50, raw_mfm, clk_5);
              if (raw_mfm)
                begin
                   first_sync = 1;
-                  div_counter = 0;
-                  // Take off one for the 50MHz cycle we just lost.
-                  next_counter = COUNTER_VAL;
+                  next_counter = COUNTER_VAL + 1;
                end
           end
         else if (div_counter == 0)
@@ -62,28 +60,30 @@ module MFM_DPLL (clk_50, raw_mfm, clk_5);
    // If the MFM clock is earlier or later than we expect it, lengthen
    // or shorten the clock width to compensate and re-sync.
    //
+   // The idea here is to maintain a lag behind the MFM clock by close
+   // to 1/2 a bit cell (MFM bits will be read in the decoder on both
+   // rising and falling edges of this 5 MHz clock, so we can't be
+   // right on top of the MFM bit cells)
+   //
    always @(posedge clk_50)
      if (mfm_state != raw_mfm)
        begin
-          mfm_state = raw_mfm;
+          mfm_state <= raw_mfm;
           if (div_counter > 2)
-            // MFM clock is early. Lengthen current 1/2 cycle.
-            div_counter = div_counter + (COUNTER_VAL - div_counter);
-          else if (div_counter > 0)
-            // MFM clock is late. Shortne next 1/2 cycle.
-            next_counter = COUNTER_VAL - div_counter + 1;
+            div_counter = div_counter - 1;
+          else if (div_counter == 0)
+            next_counter = COUNTER_VAL + 1;
        end
-
 endmodule
 
 module MFM_Decoder (clk_5, raw_mfm, mfm_buffer, byte_buffer);
    input clk_5;
    input raw_mfm;
 
-   output [15:0] mfm_buffer;
-   output [7:0] byte_buffer;
+   output [31:0] mfm_buffer;
+   output [15:0] byte_buffer;
 
-   reg [15:0] mfm_buffer;
+   reg [31:0] mfm_buffer;
 
    initial
      mfm_buffer = 0;
@@ -97,7 +97,15 @@ module MFM_Decoder (clk_5, raw_mfm, mfm_buffer, byte_buffer);
           mfm_buffer[0] = 0;
      end
 
-   assign byte_buffer = {mfm_buffer[15],
+   assign byte_buffer = {mfm_buffer[31],
+                         mfm_buffer[29],
+                         mfm_buffer[27],
+                         mfm_buffer[25],
+                         mfm_buffer[23],
+                         mfm_buffer[21],
+                         mfm_buffer[19],
+                         mfm_buffer[17],
+                         mfm_buffer[15],
                          mfm_buffer[13],
                          mfm_buffer[11],
                          mfm_buffer[9],

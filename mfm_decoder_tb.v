@@ -5,8 +5,8 @@ module MFM_Decoder_Test;
 
    wire clk_5;
 
-   wire [15:0] mfm_buffer;
-   wire [7:0] byte_buffer;
+   wire [31:0] mfm_buffer;
+   wire [15:0] byte_buffer;
 
    MFM_DPLL pll (.clk_50 (clk_50),
                  .raw_mfm (raw_mfm),
@@ -34,31 +34,7 @@ module MFM_Decoder_Test;
    initial
      begin
 
-        #150;
-        raw_mfm = 1;
-        #50;
-        raw_mfm = 0;
-        #150;
-
-        raw_mfm = 1;
-        #50;
-        raw_mfm = 0;
-        #100;
-
-        raw_mfm = 1;
-        #50;
-        raw_mfm = 0;
-        #150;
-
-        raw_mfm = 1;
-        #50;
-        raw_mfm = 0;
-        #100;
-
-        raw_mfm = 1;
-        #50;
-        raw_mfm = 0;
-        #50;
+        #137;
 
         raw_mfm = 1;
         #50;
@@ -83,6 +59,43 @@ module MFM_Decoder_Test;
         raw_mfm = 1;
         #50;
         raw_mfm = 0;
+        #50;
+
+        raw_mfm = 1;
+        #50;
+        raw_mfm = 0;
+        #50;
+
+        raw_mfm = 1;
+        #50;
+        raw_mfm = 0;
+        #50;
+
+        raw_mfm = 1;
+        #50;
+        raw_mfm = 0;
+        #50;
+
+        raw_mfm = 1;
+        #50;
+        raw_mfm = 0;
+        #50;
+
+        raw_mfm = 1;
+        #50;
+        raw_mfm = 0;
+        #50;
+
+        raw_mfm = 1;
+        #50;
+        raw_mfm = 0;
+        #150;
+
+        raw_mfm = 1;
+        #50;
+        raw_mfm = 0;
+        #100;
+
         #50;
 
         $finish;
@@ -90,7 +103,7 @@ module MFM_Decoder_Test;
 
    initial
      begin
-        $monitor("%0t %0d %0d %016b (0x%04x) %08b (0x%02x)",
+        $monitor("%0t %0d %0d %032b (0x%08x) %016b (0x%04x)",
                  $time, clk_5, raw_mfm, mfm_buffer, mfm_buffer, byte_buffer, byte_buffer);
      end
 
