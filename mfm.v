@@ -76,6 +76,15 @@ module MFM_DPLL (clk_50, raw_mfm, clk_5);
        end
 endmodule
 
+//
+// Decode a stream of MFM data.
+// Input:
+//    clk_5       - 5 MHz clock, synchroncized on MFM data
+//    raw_mfm     - Raw, undecoded MFM.
+// Output:
+//    mfm_buffer  - 32 bit holds the raw MFM data
+//    byte_buffer - 16 bit, 2-byte decoded MFM data
+//
 module MFM_Decoder (clk_5, raw_mfm, mfm_buffer, byte_buffer);
    input clk_5;
    input raw_mfm;
