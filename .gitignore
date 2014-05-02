@@ -2,3 +2,4 @@
 *.OLD
 mfm
 graph.txt
+.DS_Store

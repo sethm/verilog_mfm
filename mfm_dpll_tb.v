@@ -22,45 +22,86 @@ module MFM_Shift_Test;
         clk_50 = !clk_50;
      end
 
+   // Every 50 steps is one full 5 MHz MFM pulse width.
    initial
      begin
 
-        #275;
+        #150;
         raw_mfm = 1;
+        #50;
+        raw_mfm = 0;
+
         #100;
+        raw_mfm = 1;
+        #50;
+        raw_mfm = 0;
+
+        #100;
+        raw_mfm = 1;
+        #50;
+        raw_mfm = 0;
+
+        #150;
+        raw_mfm = 1;
+        #50;
+        raw_mfm = 0;
+
+        #100
+        raw_mfm = 1;
+        #50;
+        raw_mfm = 0;
+
+        #150
+        raw_mfm = 1;
+        #50;
+        raw_mfm = 0;
+
+        #100
+        raw_mfm = 1;
+        #50;
+        raw_mfm = 0;
+
+        #150
+        raw_mfm = 1;
+        #50;
+        raw_mfm = 0;
+
+        #50
+        raw_mfm = 1;
+        #50;
+        raw_mfm = 0;
+
+        #100
+        raw_mfm = 1;
+        #50;
+        raw_mfm = 0;
+
+        #50
+        raw_mfm = 1;
+        #50;
+        raw_mfm = 0;
+
+        #100
+        raw_mfm = 1;
+        #50;
+        raw_mfm = 0;
+
+        #100
+        raw_mfm = 1;
+        #50;
+        raw_mfm = 0;
+
+        #100
+        raw_mfm = 1;
+        #50;
+        raw_mfm = 0;
+
+        #100
+        raw_mfm = 1;
+        #50;
         raw_mfm = 0;
 
         #200;
-        raw_mfm = 1;
-        #100;
-        raw_mfm = 0;
-
-        #213;
-        raw_mfm = 1;
-        #100;
-        raw_mfm = 0;
-
-        #313;
-        raw_mfm = 1;
-        #97;
-        raw_mfm = 0;
-
-        #200;
-        raw_mfm = 1;
-        #100;
-        raw_mfm = 0;
-
-        #200;
-        raw_mfm = 1;
-        #100;
-        raw_mfm = 0;
-
-        #200;
-        raw_mfm = 1;
-        #100;
-        raw_mfm = 0;
-
-        #2000;
 
         $finish;
      end

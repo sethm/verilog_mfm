@@ -13,7 +13,7 @@ if [ -f graph.png ] ; then
     mv -f graph.png graph.png.OLD
 fi
 
-iverilog -o mfm mfm_tb.v mfm.v &&
-    vvp mfm > graph.txt &&
+iverilog -o mfm mfm_decoder_tb.v mfm.v &&
+    vvp mfm | tee graph.txt &&
     gnuplot graph.gnuplot > graph.png &&
     open graph.png
