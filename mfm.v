@@ -17,7 +17,7 @@ module MFM_DPLL (clk_50, raw_mfm, clk_5);
    reg first_sync;          // Have we ever found an MFM pulse?
    reg mfm_state;           // State of the MFM input
 
-   // Full 50MHz cycles per 1/2 5 MHz cycle.
+   // Number of ull 50MHz cycles per 1/2 5 MHz cycle.
    parameter COUNTER_VAL = 4;
 
    initial
@@ -85,12 +85,13 @@ endmodule
 //    mfm_buffer  - 32 bit holds the raw MFM data
 //    byte_buffer - 16 bit, 2-byte decoded MFM data
 //
-module MFM_Decoder (clk_5, raw_mfm, mfm_buffer, byte_buffer);
+module MFM_Decoder (clk_5, raw_mfm, mfm_buffer, word_buffer, byte_buffer);
    input clk_5;
    input raw_mfm;
 
    output [31:0] mfm_buffer;
-   output [15:0] byte_buffer;
+   output [15:0] word_buffer;
+   output [7:0] byte_buffer;
 
    reg [31:0] mfm_buffer;
 
@@ -106,7 +107,7 @@ module MFM_Decoder (clk_5, raw_mfm, mfm_buffer, byte_buffer);
           mfm_buffer[0] = 0;
      end
 
-   assign byte_buffer = {mfm_buffer[31],
+   assign word_buffer = {mfm_buffer[31],
                          mfm_buffer[29],
                          mfm_buffer[27],
                          mfm_buffer[25],
@@ -123,4 +124,37 @@ module MFM_Decoder (clk_5, raw_mfm, mfm_buffer, byte_buffer);
                          mfm_buffer[3],
                          mfm_buffer[1]};
 
+   assign byte_buffer = {mfm_buffer[15],
+                         mfm_buffer[13],
+                         mfm_buffer[11],
+                         mfm_buffer[9],
+                         mfm_buffer[7],
+                         mfm_buffer[5],
+                         mfm_buffer[3],
+                         mfm_buffer[1]};
+endmodule
+
+//
+// Watch the MFM buffer for the "4E" gap pattern, and when found,
+// assert "sync"
+//
+module ST412_Gap_Scanner (clk_50, byte_buffer, sync);
+   parameter GAP_VAL = 8'h4e; // The gap value 4E4E
+
+   input clk_50;
+   input [7:0] byte_buffer;
+
+   output sync;
+   reg sync;
+
+   initial
+     sync = 0;
+
+   always @(negedge clk_50)
+     begin
+        if (byte_buffer == GAP_VAL)
+          sync = 1;
+        else
+          sync = 0;
+     end
 endmodule
