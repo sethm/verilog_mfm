@@ -7,11 +7,12 @@ from decimal import *
 
 deltas = []
 
-max_lines = 2500
+max_lines = 450
 
 def gen_tb_header():
     print """module mfm_test();
 
+   reg reset;
    reg clk_50;
    reg raw_mfm;
 
@@ -25,7 +26,8 @@ def gen_tb_header():
    wire [7:0] data_buffer;
    wire data_valid;
 
-   MFM_DPLL pll (.clk_50 (clk_50),
+   MFM_DPLL pll (.reset (reset),
+                 .clk_50 (clk_50),
                  .raw_mfm (raw_mfm),
                  .clk_5 (clk_5));
 
@@ -39,35 +41,38 @@ def gen_tb_header():
                            .byte_buffer (byte_buffer),
                            .sync (sync));
 
-   WD_Decoder wdd (.clk_50 (clk_50),
+   WD_Decoder wdd (.reset (reset),
+                   .clk_50 (clk_50),
                    .sync (sync),
                    .byte_buffer (byte_buffer),
                    .data_buffer (data_buffer),
                    .data_valid (data_valid));
 
+   initial begin
+      reset = 1;   // active low
+      clk_50 = 0;
+      raw_mfm = 0;
+   end
 
    // Simulate a clock
-   initial
-     begin
-        clk_50 = 0;
-        raw_mfm = 0;
-     end
-
-   always
-     begin
-        #5;
-        clk_50 = !clk_50;
-     end
+   always begin
+      #5;
+      clk_50 = !clk_50;
+   end
 
    // Every 50 steps is one full 5 MHz MFM pulse width.
-   initial
-     begin"""
+   initial begin
+
+      #10 reset = 0;
+      #100 reset = 1;
+
+"""
 
 def gen_tb_footer():
     print """
 
-        $finish;
-     end
+      $finish;
+   end
 
    initial
      begin
