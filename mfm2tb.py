@@ -7,7 +7,7 @@ from decimal import *
 
 deltas = []
 
-max_lines = 450
+max_lines = 10000
 
 def gen_tb_header():
     print """module mfm_test();

@@ -7,10 +7,10 @@ GNUPLOT=gnuplot
 all: graph.png
 
 testbench.v:
-	./mfm2tb.py data/test1.csv > testbench.v
+	./mfm2tb.py data/test.csv > testbench.v
 
 mfm: testbench.v
-	$(VERILOG) -o mfm testbench.v mfm.v
+	$(VERILOG) -o mfm testbench.v mfm_dpll.v mfm_decoder.v wd_gap_scanner.v wd_decoder.v
 
 graph.txt: mfm
 	vvp mfm | tee graph.txt
