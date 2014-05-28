@@ -4,3 +4,4 @@ mfm
 graph.txt
 .DS_Store
 testbench.v
+data/test.csv

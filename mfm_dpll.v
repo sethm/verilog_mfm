@@ -34,6 +34,8 @@ module MFM_DPLL (reset, clk_50, raw_mfm, clk_5);
          next_counter = COUNTER_VAL;
       end
 
+
+
       else if (!first_sync) begin
          // It's important to align our first rising edge pulse
          // with an MFM pulse. It might be clock, or it might be data,
@@ -51,27 +53,28 @@ module MFM_DPLL (reset, clk_50, raw_mfm, clk_5);
          next_counter = COUNTER_VAL;
          clk_5 = ~clk_5;
       end
-      else
+      else begin
+         //
+         // If the MFM clock is earlier or later than we expect it,
+         //lengthen or shorten the clock width to compensate and
+         //re-sync.
+         //
+         // The idea here is to maintain a lag behind the MFM clock by close
+         // to 1/2 a bit cell (MFM bits will be read in the decoder on both
+         // rising and falling edges of this 5 MHz clock, so we can't be
+         // right on top of the MFM bit cells)
+         //
+         if (mfm_state != raw_mfm) begin
+            mfm_state = raw_mfm;
+            if (div_counter > 2)
+              div_counter = div_counter - 1;
+            else if (div_counter == 0)
+              next_counter = COUNTER_VAL + 1;
+         end
+
         // Just count down.
         div_counter = div_counter - 1;
+      end
    end
-
-   //
-   // If the MFM clock is earlier or later than we expect it, lengthen
-   // or shorten the clock width to compensate and re-sync.
-   //
-   // The idea here is to maintain a lag behind the MFM clock by close
-   // to 1/2 a bit cell (MFM bits will be read in the decoder on both
-   // rising and falling edges of this 5 MHz clock, so we can't be
-   // right on top of the MFM bit cells)
-   //
-   always @(posedge clk_50)
-     if (mfm_state != raw_mfm) begin
-        mfm_state = raw_mfm;
-        if (div_counter > 2)
-          div_counter = div_counter - 1;
-        else if (div_counter == 0)
-          next_counter = COUNTER_VAL + 1;
-     end
 
 endmodule
