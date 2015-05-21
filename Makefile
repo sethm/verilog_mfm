@@ -7,7 +7,7 @@ GNUPLOT=gnuplot
 all: graph.txt
 
 testbench.v:
-	./mfm2tb.py data/test.csv > testbench.v
+	./mfm2tb.py data/test1.csv > testbench.v
 
 mfm: testbench.v
 	$(VERILOG) -o mfm testbench.v mfm.v \
